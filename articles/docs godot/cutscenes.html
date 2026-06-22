@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        #node-tree, #character-list, #json, #script-show{
+            scroll-margin-top: 80px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal:ital,wght@0,400;0,700;1,400;1,700&family=Fjalla+One&display=swap" rel="stylesheet">
+    </head>
+<body>
+    <header>
+        <a href="../../index.html" class="logo">Estevendocs</a>
+        <input type="text" placeholder="Search">
+
+    </header>
+    <aside>
+        <div class="sidebar">
+            <h3>Navigation</h3>
+            <ul>
+                <li><a href="#">Cutscenes</a></li>
+                <li><a href="#json">json example</a></li>
+                <li><a href="#node-tree">node tree</a></li>
+                <li><a href="#script-show">dialog_scenario.gd</a></li>
+                <li><a href="#character-list">character sprite list</a></li>
+
+            </ul>
+
+            <h3>Tools</h3>
+            <ul>
+                <li><a href="../../navigation.html">Navigation page</a></li>
+                <li><a href="#">some useful tools here</a></li>
+                
+            </ul>
+        </div>
+        
+    </aside>
+    <div class="content">
+        <article>
+            
+            <div class="info">
+                <h1 class="title">Cutscenes</h1>
+                <p>
+                    <span style="color: red;">STATUS: INCOMPLETE DOC, UNFINISHED SCENE</span> <br>
+
+                    A scene used for loading Cutscenes, the cutsene being a <a href="#json" class="inline-a">json</a> called "scenario" followed by a number. <br> 
+                    All cutsenes/scenarios are stored in a folder (res://json n stuff/scenarios/) 
+                    <br>
+
+                </p>
+                <img src="./assets/screenshot cutscene.png" alt="screenshot of a cutsene" class="free-img">
+                <hr>
+                <h2 id="json">json example</h2>
+                <pre><code><embed src="./code/scenario1.json" type="" width="100%" height="100%"></code></pre>
+                <p>
+                    <span class="highlight-green">"backround":</span>
+                    A path for the image that will be the background of the image. <br>
+                    <span class="highlight-green">"scenes":</span>
+                    the number of dialogs (numbers) inside the json/cutscene/scenario. <br>
+                    <span class="highlight-green">"music":</span>
+                    the background music that will be played when a json/cutscene/scenario loads. <br>
+                    <span class="highlight-green">"(any number)":</span>
+                    data for each dialog, the number is the order. <br>
+                    <span class="highlight-green">"text":</span>
+                    the text that will be displayed in the text box from the character. wheter if it is a thought or a character speaking. <br>
+                    <span class="highlight-green">"character":</span>
+                    it can only be either "thought" or "character", otherwise the code will break.
+                    it refers wheter if youre gonna show the character node or the thought node
+                     (both a texturerect, with a label inside). <a href="#node-tree" class="inline-a">image attached</a> <br>
+                    <span class="highlight-green">"hidden":</span> 
+                    wheter to hide or show a character or thought in the screen. it can only be "true" or "" <br>
+                    <span class="highlight-green">"sprite":</span>
+                    which sprite to show. put "false" if using thoughts. otherwise its should be a file path. 
+                    <a href="#character-list" class="inline-a">list of character sprites</a> <br>
+                    <span class="highlight-green">"audio":</span>
+                    (optional) file path for a sfx if you want to use one at that dialog. it cannot be left empty otherwise the game will crash.
+                    if youre not gonna use any sfx, just dont put the "audio" tag.
+
+                </p>
+                <hr>
+                <h2 id="node-tree">node tree</h2>
+                <img src="./assets/cutscenes screenshot.png" alt="cutscenes tree" class="free-img">
+                <p>
+                    <span class="highlight-green">dialog_scenario</span>
+                    control node (the GUI one). contains everything. <br>
+                    <span class="highlight-green">character</span>
+                    used to show any character sprite, hidden if youre using thoughts <br>
+                    <span class="highlight-green">label</span>
+                    (any label) contains the text that the character/thought is saying. <br>
+                    <span class="highlight-green">thought</span>
+                    used to only show the thought sprite. hidden if youre using characters<br>
+                    <span class="highlight-green">background</span>
+                    the backgorund image for the cutscene. <br>
+                    <span class="highlight-green">bgm</span>
+                    contains the background music that will be played when a json/cutscene/scenario loads. it changes its file automatically
+                    on the <a href="#script-show" class="inline-a">control_dialog.gd</a> script. <br>
+                    <span class="highlight-green">sfx</span>
+                    same shit that music but this time with sfx
+
+                </p>
+                <hr>
+                <h2 id="script-show">dialog_scenario.gd</h2>
+                <pre><code><embed src="./code/dialog_scenario.txt" type="" width="100%" height="100%"></code></pre>
+                <hr>
+                <h2 id="character-list">character sprite list</h2>
+                <hr>
+                <h1>projects</h1>
+                <a href="#">Esteven's palace</a>
+                <hr>
+                <h1>Docs</h1>
+                <a href="#">Esteven's palace docs</a>
+                <br><br><br><br><br><br>
+                <p>you've reached the end!! <a href="#" class="inline-a">go to the top</a></p>
+                <hr>
+
+
+            </div>
+        </article>
+
+    </div>
+</body>
+</html>

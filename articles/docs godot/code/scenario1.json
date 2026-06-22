@@ -1,0 +1,43 @@
+{
+  "background": "res://resource/backgrounds/nothing.jpeg",
+  "scenes": "6",
+  "music": "res://resource/audio/btm.wav",
+  "1": {
+	"text": "...",
+	"character": "thought",
+	"hidden": "true",
+	"sprite": "false"
+	
+  },
+  "2": {
+	"text": "...",
+	"character": "thought",
+	"hidden": "",
+	"sprite": "false"
+	
+  },
+  "3": {
+	"text": "it is may 28th.\ni spent my day out of my home.",
+	"character": "thought",
+	"hidden": "",
+	"sprite": "false"
+  },
+  "4": {
+	"text": "im so tired,\nbut i dont have anything tomorrow anyways.",
+	"character": "thought",
+	"hidden": "",
+	"sprite": "false"
+  },
+  "5": {
+	"text": "...",
+	"character": "thought",
+	"hidden": "",
+	"sprite": "false"
+  },
+  "6": {
+	"text": "*i go to my room*",
+	"character": "thought",
+	"hidden": "",
+	"sprite": "false"
+  }
+}

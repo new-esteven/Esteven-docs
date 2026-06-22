@@ -1,0 +1,106 @@
+extends Control
+
+var dialog
+var thought
+var is_active = true
+var order = 1
+var DATA: Dictionary
+var scenes
+var scene: int = 5
+
+func _ready() -> void:
+	hide_everything()
+
+	dialog = get_node("character/Label")
+	thought = get_node("thought/Label")
+	
+	# CHANGE THIS LATER
+	# CHANGE THIS LATER
+	# CHANGE THIS LATER
+	DATA = load_data("res://json n stuff/scenarios/scenario5.json")
+	# not this
+	load_scene()
+	
+func change_scene():
+	DATA = load_data("res://json n stuff/scenarios/scenario"+str(scene)+".json")
+	# not this
+	load_scene()
+
+func load_scene():
+	$background.texture = load(DATA["background"])
+	$bgm.stream = load(DATA["music"])
+	scenes = int(DATA["scenes"])
+	$bgm.play()
+
+func load_data(scenario):
+	# SCENARIO EXAMPLE: "res://data/save.json"
+	var file = FileAccess.open(scenario, FileAccess.READ)
+	var text = file.get_as_text()
+
+	var json = JSON.new()
+	json.parse(text)
+
+	var data = json.data
+
+	print(data["1"])
+	print(data["2"])
+
+	return data
+	
+# CHANGES TO THE NEXT DIALOG
+func load_dialog(info, previous):
+	#info example: { "text": "...", "character": "thought", "hidden": "True", "sprite": "somepath" }
+	# same with previous
+	print("aa")
+	print(previous)
+	
+	if info["hidden"] == "true":
+		hide_everything()
+	else:
+		if previous:
+			hide_character(get_node(previous["character"]))
+		show_character(get_node(info["character"]), info["sprite"])
+		update_text(info["text"])
+		if info.has("audio"):
+			play_sound(info["audio"])
+	
+	order += 1
+	
+#SHOWS THE SPRITE OF THE THOUGHT OR CHARACTER
+func show_character(texture, sprite):
+	texture.show()
+	if not sprite == "false":
+		texture.texture = load(sprite)
+	
+func play_sound(path):
+	$sfx.stream = load(path)
+	$sfx.play()
+		
+func hide_character(texture):
+	texture.hide()
+	
+# HIDES THE DIALOG
+func hide_everything():
+	$character.hide()
+	$thought.hide()
+	
+# CHANGES THE TEXT IN THE DIALOG BOX
+func update_text(message):
+	# message is the "text" key, or what the charac is going to say
+	dialog.text = message
+	thought.text = message
+	
+func _process(_delta: float) -> void:
+	if is_active:
+		if Input.is_action_just_pressed("enter"):
+			if order > scenes:
+				# CHANGE THIS LATER
+				# CHANGE THIS LATER
+				# CHANGE THIS LATER
+				scene += 1
+				change_scene()
+				order = 1
+				return
+			var previous = DATA[str(order-1)] if order > 1 else false
+			load_dialog(DATA[str(order)], previous)
+			
