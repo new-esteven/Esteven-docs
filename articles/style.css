@@ -186,6 +186,10 @@ pre {
     margin-left: 10px;
 }
 
+.function {
+    color: red;
+}
+
 
 @media (max-width: 600px) {
     aside {

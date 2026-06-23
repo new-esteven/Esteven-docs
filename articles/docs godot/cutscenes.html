@@ -113,8 +113,48 @@
                 <hr>
                 <h2 id="script-show">dialog_scenario.gd</h2>
                 <pre><code><embed src="./code/dialog_scenario.txt" type="" width="100%" height="100%"></code></pre>
+                <p>
+                    <span class="function">func</span> <span class="highlight-green">_ready():</span> when the node is ready, it hides
+                    the character and thought and then loads the scenario/cutscene. after that just load the first dialog.
+                    currently it load a fixes json. will change this later to load scenarios/cutscenes based on the save data. <br>
+                    <span class="function">func</span> <span class="highlight-green">change_scene():</span> loads a new scenario json
+                    based on the current scene number and then refreshes the scene assets. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">load_scene():</span> loads the background image,
+                    background music and total number of dialogs/scenes from the current scenario data. then starts playing the music. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">load_data(scenario):</span> opens a scenario json,
+                    parses it and returns the contents as a dictionary. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">load_dialog(info, previous):</span> loads a dialog
+                    entry from the scenario data. updates the visible character, sprite, text and optional sound effect. also advances
+                    the dialog order counter. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">show_character(texture, sprite):</span> shows the
+                    specified character/thought box and updates its sprite if one is provided. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">play_sound(path):</span> loads and plays a sound
+                    effect from the provided path. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">hide_character(texture):</span> hides the specified
+                    character/thought box. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">hide_everything():</span> hides both the character
+                    and thought boxes. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">update_text(message):</span> updates the dialog text
+                    shown in both the character and thought boxes. <br>
+
+                    <span class="function">func</span> <span class="highlight-green">_process(delta):</span> checks every frame if the
+                    player pressed enter. if there are dialogs remaining it loads the next one. if the scene has ended it advances to
+                    the next scenario and resets the dialog order. <br>
+                    
+                </p>
                 <hr>
                 <h2 id="character-list">character sprite list</h2>
+                <p>
+                    gatekeeping these. every sprite is located in res://resource/sprites/
+                </p>
                 <hr>
                 <h1>projects</h1>
                 <a href="#">Esteven's palace</a>
