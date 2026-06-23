@@ -31,10 +31,10 @@
             <h3>Navigation</h3>
             <ul>
                 <li><a href="#">Cutscenes</a></li>
-                <li><a href="#json">json example</a></li>
+                <li><a href="#json">control.gd</a></li>
                 <li><a href="#node-tree">node tree</a></li>
-                <li><a href="#script-show">dialog_scenario.gd</a></li>
-                <li><a href="#character-list">character sprite list</a></li>
+                <li><a href="#projects">projects</a></li>
+                <li><a href="#docs">docs</a></li>
 
             </ul>
 
@@ -61,40 +61,49 @@
 
                 </p>
                 <hr>
-                <h2 id="json">json example</h2>
-                <pre><code><embed src="./code/scenario1.json" type="" width="100%" height="100%"></code></pre>
+                <h2 id="json">control.gd</h2>
+                <pre><code><embed src="./code/control combat crop.txt" type="" width="100%" height="100%"></code></pre>
                 <p>
-                    <span class="highlight-green">"backround":</span>
-                    A path for the image that will be the background of the image. <br>
-                    <span class="highlight-green">"scenes":</span>
-                    the number of dialogs (numbers) inside the json/cutscene/scenario. <br>
-                    <span class="highlight-green">"music":</span>
-                    the background music that will be played when a json/cutscene/scenario loads. <br>
-                    <span class="highlight-green">"(any number)":</span>
-                    data for each dialog, the number is the order. <br>
-                    <span class="highlight-green">"text":</span>
-                    the text that will be displayed in the text box from the character. wheter if it is a thought or a character speaking. <br>
-                    <span class="highlight-green">"character":</span>
-                    it can only be either "thought" or "character", otherwise the code will break.
-                    it refers wheter if youre gonna show the character node or the thought node
-                     (both a texturerect, with a label inside). <a href="#node-tree" class="inline-a">image attached</a> <br>
-                    <span class="highlight-green">"hidden":</span> 
-                    wheter to hide or show a character or thought in the screen. it can only be "true" or "" <br>
-                    <span class="highlight-green">"sprite":</span>
-                    which sprite to show. put "false" if using thoughts. otherwise its should be a file path. 
-                    <a href="#character-list" class="inline-a">list of character sprites</a> <br>
-                    <span class="highlight-green">"audio":</span>
-                    (optional) file path for a sfx if you want to use one at that dialog. it cannot be left empty otherwise the game will crash.
-                    if youre not gonna use any sfx, just dont put the "audio" tag.
+                    <span class="function">func</span> <span class="highlight-green">load_data(path):</span> loads and parses a json file from the provided path and returns the data as a dictionary. used for save files, battle data, level scaling and pretty much anything stored in json.<br>
 
+                    <span class="function">func</span> <span class="highlight-green">load_character(number):</span> shows the selected party member, updates their hp and skill names in the ui and hides the previously selected character. used whenever the player changes turns.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">shadow_turn():</span> handles the enemy phase. every shadow attacks a random party member, updates the battle log and checks if the battle has ended. if all enemies are defeated the battle ends immediately.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">_ready():</span> loads the battle data and stat tables, gathers all characters and enemies from the scene tree and initializes their stats. once everything is loaded it selects the first party member and starts the battle.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">change_turn():</span> advances to the next party member. if every ally has already acted it starts the enemy turn before returning control to the player.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">attack(shadow, multiplier, base_attack, base_defense, skill_power, is_physical_attack, luck, skill):</span> calculates damage using the battle formula, applies critical hits and random variance, updates the target hp and displays the damage dealt on screen.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">play_sound(character):</span> plays the attack sound effect associated with the specified character and temporarily lowers the background audio volume while it plays.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">action(skill, character, sword, shadowlife, shadow):</span> executes an action during battle. this can be either a normal weapon attack or a skill attack. after applying damage it updates the battle log and checks if the enemy has been defeated.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">end_battle(won, character, is_shadow_turn):</span> handles the end of combat. if the player wins it displays the victory screen and will later be responsible for rewards and scene changes. losing currently has not been implemented yet.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">hide_menu():</span> hides all battle menus and skill selection interfaces.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">open_persona_menu():</span> opens the skill selection menu and switches the current menu state to persona mode.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">open_general_menu():</span> opens the main battle menu and switches the current menu state back to general mode.<br>
+
+                    <span class="function">func</span> <span class="highlight-green">_process(delta):</span> handles all battle input every frame. manages menu navigation, skill selection, attacks, turn progression and returning between menus while preventing input during enemy actions.<br>
                 </p>
                 <hr>
-                
-                <h1>projects</h1>
-                <a href="#">Esteven's palace</a>
+                <h1 id="node-tree">node tree</h1>
+                <img src="./assets/messy tree.png" alt="chaos." class="free-img">
+                <img src="./assets/messy shit 2.png" alt="what the fucj" class="free-img">
+                <p>
+                    this node tree is a serious fucking mess. you know what fineeee i'll just make everything over again. now i have a lot more of experience.
+                </p>
+
                 <hr>
-                <h1>Docs</h1>
-                <a href="#">Esteven's palace docs</a>
+                <h1 id="projects">projects</h1>
+                <a href="./estevens palace docs.html">Esteven's palace</a>
+                <hr>
+                <h1 id="docs">Docs</h1>
+                <a href="./estevens palace docs.html">Esteven's palace docs</a>
                 <br><br><br><br><br><br>
                 <p>you've reached the end!! <a href="#" class="inline-a">go to the top</a></p>
                 <hr>

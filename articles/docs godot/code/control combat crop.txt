@@ -1,0 +1,249 @@
+extends Control
+# TODO: make dying a thing for allies
+# make item system
+# 
+var chac_data = null
+var every_stat = null
+var characters = []
+var stats = []
+var turn: int = 0
+var current_menu = "general"
+var character_count: int = len(characters)
+var shadows = []
+var shadow_count: int = len(shadows)
+var charac_status = []
+var battle_busy = false
+var skills = []
+
+# load any json
+func load_data(path):
+	var file = FileAccess.open(path, FileAccess.READ)
+	var text = file.get_as_text()
+
+	var json = JSON.new()
+	json.parse(text)
+
+	var data = json.data
+	
+	return data
+
+func load_character(number):
+	
+	characters[number].show()
+	get_node("ColorRect/Label").text = str(skills[number][0])
+	get_node("ColorRect/Label2").text = str(skills[number][1])
+	get_node("ColorRect/Label3").text = str(skills[number][2])
+	$ChacLife.text = "HP: " + str(characters[number].hp)
+	if number == 0 and character_count != 1:
+		characters[character_count-1].hide()
+	if number > 0:
+		characters[number-1].hide()
+	
+func shadow_turn():
+	if int(get_node("lifeShadow").text) <= 0:
+		get_node("bad guys/shadow").hide()
+		await end_battle(true, characters[-1].name, true)
+		return
+	hide_menu()
+	await get_tree().create_timer(2.0).timeout
+	for shadow in shadows:
+		var affected = randi() % character_count
+		load_character(affected)
+		characters[affected].hp -= attack(("partyStats/"+str(characters[affected].name+"/hp")), 1, shadow.stats["attack"], shadow.stats["endurance"],
+			20, true, shadow.stats["luck"], randf())
+		$info.text = str(shadow.name)+" just attacked!"
+		if get_node("/root/combat/"+str(characters[affected].name)+"_hit"):
+				get_node("/root/combat/"+str(characters[affected].name)+"_hit").play()
+				get_node("/root/combat/AudioStreamPlayer2D").volume_db -= 10
+				await get_node("/root/combat/"+str(characters[affected].name)+"_hit").finished
+				get_node("/root/combat/AudioStreamPlayer2D").volume_db += 10
+		await get_tree().create_timer(1.0).timeout
+		open_general_menu()
+
+func _ready() -> void:
+	# CHANGE THE CHAC_DATA PATH. CHAC_DATA = SAVEFILE
+	chac_data = load_data("res://json n stuff/data/test_battle.json")
+	every_stat = load_data("res://json n stuff/data/persona_level_system.json")
+	for child in $"good guys".get_children():
+		characters.append(child)
+	for child in $"bad guys".get_children():
+		shadows.append(child)
+	for child in $partyStats.get_children():
+		charac_status.append(child)
+	for character in characters:
+		skills.append(character.skills)
+		character.stats = every_stat[str(int(chac_data["party"]["characters"][character.name]["level"]))]
+		stats.append(character.stats)
+		get_node(("partyStats/"+str(character.name+"/hp"))).text = "HP: "+str(int(character.stats["hp"]))
+	for shadow in shadows:
+		shadow.stats = every_stat[str(int(shadow.level))]
+	$lifeShadow.text = "HP: "+str(int(shadows[0].stats["hp"]))
+	character_count = len(characters)
+	shadow_count = len(shadows)
+	#print(str(int(chac_data["party"]["characters"]["joker"]["level"])))
+	load_character(turn)
+	
+func change_turn():
+	turn += 1
+	if turn > character_count-1:
+		battle_busy = true
+		$turn.show()
+		await shadow_turn()
+		turn = 0
+		battle_busy = false
+		$turn.hide()
+	load_character(turn)
+	
+func attack(shadow, multiplier, base_attack,
+ base_defense, skill_power, is_physical_attack, luck, skill):
+	# shadow is the node that stores the shadow's life, or label with chac hp
+	# DAMAGE FORMULA BULLSHIT
+	
+	# The core math formula
+	var ratio: float = float(base_attack) / float(max(1, base_defense))
+	if skill:
+		ratio = float(base_attack * (base_attack * skill)) / float(max(1, base_defense))
+	var base_damage: float = sqrt(skill_power * ratio) * 5.0
+
+	# Crit roll based entirely on Luck
+	var is_critical: bool = false
+	if is_physical_attack:
+		var crit_chance: float = luck * 0.005
+		if randf() <= crit_chance:
+			is_critical = true
+
+	# Apply modifiers
+	var modifier: float = 1.0
+	if is_critical:
+		modifier *= 1.5
+
+	# Random variance (+/- 5%)
+	var variance: float = randf_range(0.95, 1.05)
+
+	# Final calculation
+	var final_damage: int = floor(base_damage * modifier * variance)
+	# continue
+	get_node(shadow).text = "HP: "+str(int(get_node(shadow).text) - 
+			int(final_damage))
+	
+	$damage.show()
+	$damage.text = str(final_damage)
+	return final_damage
+	
+func play_sound(character):
+	if get_node("/root/combat/"+str(character)+"_attack"):
+		get_node("/root/combat/"+str(character)+"_attack").play()
+		get_node("/root/combat/AudioStreamPlayer2D").volume_db -= 10
+		await get_node("/root/combat/"+str(character)+"_attack").finished
+		get_node("/root/combat/AudioStreamPlayer2D").volume_db += 10	
+
+func action(skill, character, sword, shadowlife, shadow):
+	if sword:
+		attack("lifeShadow", 1, stats[turn]["attack"], stats[turn]["endurance"],
+			20, true, stats[turn]["luck"], false)
+		$info.text = str(characters[turn].name)+" just attacked!"
+			# audio 
+		play_sound(characters[turn].name)
+		
+		if int(get_node(shadowlife).text) <= 0:
+			shadow.hide()
+			if turn == character_count-1:
+				await end_battle(true, characters[turn].name, true)
+			else:
+				await end_battle(true, characters[turn].name, false)
+		return
+			
+	attack("lifeShadow", 1, stats[turn]["attack"], stats[turn]["endurance"],
+			20, true, stats[turn]["luck"], skill)
+	$info.text = str(characters[turn].name)+" just attacked!"
+	open_general_menu()
+	play_sound(characters[turn].name)
+		
+	if int(get_node(shadowlife).text) <= 0:
+		shadow.hide()
+		if turn == character_count-1:
+			await end_battle(true, characters[turn].name, true)
+		else:
+			await end_battle(true, characters[turn].name, false)
+			
+		
+func end_battle(won, character, is_shadow_turn):
+	if won:
+		$info.text = "shadow defeated!"
+		await get_tree().create_timer(3.0).timeout
+		get_node("win/"+str(character)).show()
+		if is_shadow_turn:
+			play_sound(character)
+		else:
+			play_sound(character)
+		
+		# CHANGE SCENE, GIVE REWARDS
+		# CHANGE SCENE, GIVE REWARDS
+		# CHANGE SCENE, GIVE REWARDS
+	else:
+		# TRIGGER GAME OVER
+		# TRIGGER GAME OVER
+		# TRIGGER GAME OVER
+		pass
+
+func hide_menu():
+	$OrderGun.hide()
+	$PersonaItemSword.hide()
+	$ColorRect.hide()
+	
+func open_persona_menu():
+	$OrderGun.hide()
+	$PersonaItemSword.hide()
+	$ColorRect.show()
+	current_menu = "persona"
+	
+func open_general_menu():
+	$OrderGun.show()
+	$PersonaItemSword.show()
+	$ColorRect.hide()
+	current_menu = "general"
+
+func _process(_delta: float) -> void:
+	
+	
+	if Input.is_action_just_pressed("persona"):
+		if battle_busy:
+			return
+		open_persona_menu()
+	if Input.is_action_just_pressed("left"):
+		if current_menu == "general":
+			pass
+		if current_menu == "persona":
+			action(chac_data["party"]["characters"][characters[turn].name]["attacks"][skills[turn][1]]
+			, null, false, "lifeShadow", get_node("bad guys/shadow"))
+			change_turn()
+	if Input.is_action_just_pressed("item"):
+		if current_menu == "general":
+			# CHANGE THIS LATER CHANGE THIS LATER
+			# CHANGE THIS LATER CHANGE THIS LATER
+			# CHANGE THIS LATER CHANGE THIS LATER
+			pass
+		if current_menu == "persona":
+			action(chac_data["party"]["characters"][characters[turn].name]["attacks"][skills[turn][2]]
+			, null, false, "lifeShadow", get_node("bad guys/shadow"))
+			change_turn()
+	if Input.is_action_just_pressed("confirm"):
+		if battle_busy: 
+			return
+		if current_menu == "general":
+			await action("", null, true, "lifeShadow", get_node("bad guys/shadow"))
+			change_turn()
+			
+		if current_menu == "persona":
+			action(chac_data["party"]["characters"][characters[turn].name]["attacks"][skills[turn][0]]
+			, null, false, "lifeShadow", get_node("bad guys/shadow"))
+			change_turn()
+			
+	if Input.is_action_just_pressed("go back"):
+		if current_menu == "general":
+			pass
+		if current_menu == "persona":
+			open_general_menu()
+		
+		
+		

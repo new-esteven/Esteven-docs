@@ -175,6 +175,10 @@ pre {
     
 }
 
+.function {
+    color: red;
+}
+
 
 @media (max-width: 600px) {
     aside {
