@@ -204,3 +204,18 @@ pre {
     }
 
 }
+
+@media (max-width: 415px) {
+    .logo{
+        display: none;
+    }
+
+    .image-frame{
+        float: none;
+        width: 50%;
+        margin-left: 25%;
+
+        
+    }
+
+}
